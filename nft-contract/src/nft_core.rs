@@ -25,7 +25,7 @@ pub trait NonFungibleTokenCore {
     );
 
     //get information about the NFT token passed in
-    fn nft_token(&self, token_id: TokenId);
+    fn nft_token(&self, token_id: TokenId) -> Option<JsonToken>;
 }
 
 #[ext_contract(ext_non_fungible_token_receiver)]
@@ -101,10 +101,18 @@ impl NonFungibleTokenCore for Contract {
     }
 
     //get the information for a specific token ID
-    fn nft_token(&self, token_id: TokenId) {
-        /*
-            FILL THIS IN
-        */
+    fn nft_token(&self, token_id: TokenId) -> Option<JsonToken> {
+        if let Some(token) = self.tokens_by_id.get(&token_id) {
+            let metadata = self.token_metadata_by_id.get(&token_id).unwrap();
+
+            Some(JsonToken {
+                token_id,
+                owner_id: token.owner_id,
+                metadata
+            })
+        } else {
+            None
+        }
     }
 }
 
